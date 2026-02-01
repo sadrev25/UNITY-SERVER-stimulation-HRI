@@ -1,64 +1,111 @@
-# Unity Simulation Server
+# Unity Underwater Simulation Server
 
-A Unity-based simulation server for underwater robotics including a BlueROV with ROS2 integration.
+This repository contains a Unity-based simulation server developed
+for underwater robotics experimentation and academic evaluation.
+The system provides a simulated underwater environment with ROS2
+connectivity, enabling interaction with a BlueROV-style vehicle.
 
-## Features
+The project focuses on simulation-side logic rather than visualization
+output, making it suitable for backend testing and control integration.
 
-### Simulation Environment
-- **Realistic Underwater Physics**
-  - Buoyancy simulation
-  - Realistic motion dynamics
-  - Collision detection
-- **BlueROV2 Model**
-  - Integrated camera
-  - vehicle dynamics
-- **Environment**
-  - Cirtesu UJI pool (underwater environment)
-  - Black box object
+---
 
-### ROS2 Integration
-- **Velocity Subscriber** - `/bluerov1/cmd_vel` for robot control
-- **Camera Publisher** - Real-time camera feed from BlueROV2
-- **Odometry Publisher** - Position and orientation data
-- **Collision Checker** - Real-time collision detection
+## Core Functionality
 
-## Prerequisites
+### Simulation Setup
+- Underwater physics modeling for robotic vehicles
+- Buoyancy and drag effects applied to the ROV
+- Collision handling with environment objects
+- Stable motion behavior suitable for teleoperation
 
-### Required ROS2 Packages
+### Robotic Vehicle
+- BlueROV-type underwater vehicle model
+- Integrated virtual camera sensor
+- Vehicle dynamics driven by ROS2 velocity commands
 
-1. **ROS TCP Endpoint** - Communication bridge between Unity and ROS2
-   - Repository: [https://github.com/Unity-Technologies/ROS-TCP-Endpoint](https://github.com/Unity-Technologies/ROS-TCP-Endpoint)
+### Environment
+- Pool-based underwater test environment (UJI scenario)
+- Static underwater objects including a target / black-box element
+- Collision-aware interaction with environment geometry
 
-2. **Teleop Twist Keyboard** - Keyboard teleoperation control
-   - Repository: [https://github.com/ros2/teleop_twist_keyboard](https://github.com/ros2/teleop_twist_keyboard)
+---
 
-## Usage
+## ROS2 Communication
 
-### Step 1: Start ROS TCP Endpoint Server
+The simulation server communicates with ROS2 using a TCP-based bridge.
 
-Run the ROS TCP endpoint to establish communication with Unity:
+### Active Interfaces
+- **Velocity Input**
+  - Subscribes to `/bluerov1/cmd_vel` for motion control
+- **Camera Output**
+  - Publishes simulated camera images
+- **State Feedback**
+  - Publishes odometry (position and orientation)
+- **Collision Events**
+  - Detects and reports collisions during runtime
+
+---
+
+## System Requirements
+
+### ROS2 Dependencies
+
+The following ROS2 packages are required:
+
+- **ROS TCP Endpoint**
+  - Enables data exchange between Unity and ROS2
+  - Repository: https://github.com/Unity-Technologies/ROS-TCP-Endpoint
+
+- **Keyboard Teleoperation**
+  - Used for manual control of the simulated vehicle
+  - Repository: https://github.com/ros2/teleop_twist_keyboard
+
+---
+
+## Running the Simulation Server
+
+### Step 1: Start ROS TCP Bridge
+
+Launch the ROS TCP server to allow Unity communication:
 
 ```bash
-ros2 run ros_tcp_endpoint default_server_endpoint --ros-args -p ROS_IP:=127.0.0.1 -p ROS_TCP_PORT:=10000
-```
+ros2 run ros_tcp_endpoint default_server_endpoint --ros-args \
+-p ROS_IP:=127.0.0.1 \
+-p ROS_TCP_PORT:=10000
+Notes:
 
-**Parameters:**
-- `ROS_IP`: IP address for the ROS server (use `127.0.0.1` for local, or your machine's IP for network)
-- `ROS_TCP_PORT`: TCP port for communication (default: `10000`). It should be same as inside Unity as well
+Use 127.0.0.1 for local execution
 
-### Step 2: Launch Unity Simulation
+Ensure the port matches the configuration inside Unity
 
-Open the Unity project and press Play to start the simulation server.
+Step 2: Start Unity Simulation
 
-### Step 3: Control the BlueROV2
+Open the Unity project and press Play.
+The simulation server will begin running and wait for ROS2 connections.
 
-Use keyboard teleoperation to control the vehicle:
+Step 3: Control the Vehicle
 
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=/bluerov1/cmd_vel
-```
+Send velocity commands using keyboard teleoperation:
+
+ros2 run teleop_twist_keyboard teleop_twist_keyboard \
+--ros-args --remap cmd_vel:=/bluerov1/cmd_vel
 
 
-## Dependencies
-- Unity Robotics Hub packages
-- ROS2 Humble
+The ROV will respond in real time to velocity inputs.
+
+Software Stack
+
+Unity (Simulation Server)
+
+Unity Robotics Hub packages
+
+ROS2 Humble distribution
+
+Academic Context
+
+This project was prepared as part of a university coursework
+focused on simulation servers and human–robot interaction (HRI).
+
+
+
+
